@@ -56,7 +56,6 @@ export async function onRequest(context) {
         const tokenData = await tokenResponse.json();
         if (tokenData.error) return new Response(`Erro na API do provedor: ${tokenData.error}`, { status: 400 });
 
-        // 5. Descobrindo o Email do Usuário
         debugPasso = 'Buscando Dados do Usuário';
         let accountId = '';
         let email = '';
