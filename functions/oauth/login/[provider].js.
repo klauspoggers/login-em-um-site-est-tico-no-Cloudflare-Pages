@@ -1,1 +1,13 @@
+export async function onRequest(context) {
+  const provider = context.params.provider;
 
+  if (provider !== 'google' && provider !== 'github') {
+    return new Response(null, { status: 404 });
+  }
+
+  const env = context.env;
+  const baseUrl = env.PUBLIC_BASE_URL;
+  const clientId = provider === 'google' ? env.GOOGLE_CLIENT_ID : env.GITHUB_CLIENT_ID;
+  
+  return new Response(`Redirecionamento para ${provider} será montado aqui.`, { status: 200 });
+}
