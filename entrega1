@@ -1,0 +1,12 @@
+CREATE TABLE oauth_transactions (  tx TEXT PRIMARY KEY,  provider TEXT NOT NULL,  state TEXT NOT NULL,  code_verifier TEXT NOT NULL,  nonce TEXT)
+
+CREATE TABLE sessions (
+  id TEXT PRIMARY KEY,
+  provider TEXT NOT NULL,
+  provider_account_id TEXT NOT NULL,
+  email TEXT,
+  created_at INTEGER NOT NULL
+);
+https://site-estatico-dci.pages.dev/oauth/callback/google
+https://site-estatico-dci.pages.dev
+https://site-estatico-dci.pages.dev/oauth/callback/github
