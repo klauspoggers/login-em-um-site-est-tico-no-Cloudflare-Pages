@@ -1,0 +1,1 @@
+https://site-estatico-dci.pages.dev/oauth/callback/google
