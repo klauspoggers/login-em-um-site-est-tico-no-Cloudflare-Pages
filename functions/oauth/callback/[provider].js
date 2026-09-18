@@ -69,10 +69,11 @@ export async function onRequestGet(context) {
         body: tokenBody.toString()
     });
     
-    if (!tokenResponse.ok) {
-    const detalhesErro = await tokenResponse.text();
-    return new Response('Erro do Google: ' + detalhesErro, { status: 400, headers: { 'Cache-Control': 'no-store' } });
-    }
+   if (!tokenResponse.ok) {
+       const detalhesErro = await tokenResponse.text();
+       const statusSegredo = context.env.GOOGLE_CLIENT_SECRET ? "Cloudflare ENCHERGOU a senha" : "Cloudflare entregou a variavel VAZIA";
+       return new Response('Erro do Google: ' + detalhesErro + ' | Status: ' + statusSegredo, { status: 400, headers: { 'Cache-Control': 'no-store' } });
+   }
     const tokenData = await tokenResponse.json();
 
     let issuer, subject, email, displayName;
