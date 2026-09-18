@@ -1,38 +1,35 @@
-export async function onRequest(context) {
-    try {
-        const cookieHeader = context.request.headers.get('Cookie') || '';
-        const sessionMatch = cookieHeader.match(/__Host-session=([^;]+)/);
+function encodeBase64Url(buffer) {
+    return btoa(String.fromCharCode(...new Uint8Array(buffer))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+async function sha256(text) {
+    const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return encodeBase64Url(buffer);
+}
 
-        if (!sessionMatch) {
-            return new Response(JSON.stringify({ error: "Não autenticado. Faça login primeiro." }), {
-                status: 401,
-                headers: { 'Content-Type': 'application/json' }
-            });
+export async function onRequestGet(context) {
+    const cookieHeader = context.request.headers.get('Cookie') || '';
+    const match = cookieHeader.match(/__Host-session=([^;]+)/);
+    
+    if (!match) return new Response('Unauthorized', { status: 401, headers: { 'Cache-Control': 'no-store' } });
+
+    const session_raw = match[1];
+    const id_hash = await sha256(session_raw);
+    const now = Math.floor(Date.now() / 1000);
+
+    const session = await context.env.DB.prepare(
+        `SELECT * FROM sessions WHERE id_hash = ? AND expires_at > ?`
+    ).bind(id_hash, now).first();
+
+    if (!session) return new Response('Unauthorized', { status: 401, headers: { 'Cache-Control': 'no-store' } });
+
+    return new Response(JSON.stringify({
+        email: session.email,
+        displayName: session.display_name || session.email || 'Usuário',
+        provedor: session.issuer.includes('google') ? 'google' : 'github'
+    }), {
+        headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store'
         }
-
-        const sessionId = sessionMatch[1];
-        const env = context.env;
-
-        const session = await env.DB.prepare(
-            `SELECT * FROM sessions WHERE id = ?`
-        ).bind(sessionId).first();
-
-        if (!session) {
-            return new Response(JSON.stringify({ error: "Sessão inválida ou expirada." }), {
-                status: 401,
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
-        return new Response(JSON.stringify({
-            mensagem: "Login bem-sucedido!",
-            provedor: session.provider,
-            email: session.email
-        }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-    } catch (error) {
-        return new Response(JSON.stringify({ error: "Erro na API", detalhes: error.message }), { status: 500 });
-    }
+    });
 }
