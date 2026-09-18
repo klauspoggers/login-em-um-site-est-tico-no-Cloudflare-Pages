@@ -1,9 +1,6 @@
-CREATE TABLE oauth_transactions (  tx TEXT PRIMARY KEY,  provider TEXT NOT NULL,  state TEXT NOT NULL,  code_verifier TEXT NOT NULL,  nonce TEXT)
-
-CREATE TABLE sessions (
-  id TEXT PRIMARY KEY,
-  provider TEXT NOT NULL,
-  provider_account_id TEXT NOT NULL,
-  email TEXT,
-  created_at INTEGER NOT NULL
-);
+name                        type
+oauth_transactions_expiry   index
+sessions_expiry             index
+_cf_KV                      table
+oauth_transactions          table
+sessions                    table
