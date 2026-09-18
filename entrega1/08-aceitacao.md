@@ -9,8 +9,7 @@ Declaramos que todos os requisitos solicitados para o Laboratório de Autentica�
 - [x] Rotas de API `/api/health`, `/api/me` e rota de logout (`POST`).
 - [x] Separação em frontend (public) e backend (functions).
 
-**Assinaturas da Dupla:**
-* Klaus - RA: [Digite seu RA aqui]
-* Lucas - RA: [Digite o RA do Lucas aqui]
+**Assinatura**
+* Klaus - RA: 2025207094
 
 Data: 18 de setembro de 2026
